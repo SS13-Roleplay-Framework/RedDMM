@@ -55,11 +55,60 @@ func (p *Panel) Process() {
 
 func (p *Panel) ProcessV(instance *dmminstance.Instance) {
 	imgui.BeginDisabledV(!dm.IsMovable(instance.Prefab().Path()))
-	p.showNudgeOption("Nudge X", true, instance)
-	p.showNudgeOption("Nudge Y", false, instance)
+	// Show all 4 nudge values stacked vertically
+	p.showNudgeOptionDirect("Nudge X", "pixel_x", instance)
+	p.showNudgeOptionDirect("Nudge Y", "pixel_y", instance)
+	p.showNudgeOptionDirect("Nudge Z", "pixel_z", instance)
+	p.showNudgeOptionDirect("Nudge W", "pixel_w", instance)
 	imgui.EndDisabled()
 
 	p.showDirOption(instance)
+}
+
+// showNudgeOptionDirect shows a nudge option for a specific var name
+func (p *Panel) showNudgeOptionDirect(label string, varName string, instance *dmminstance.Instance) {
+	pixelVal := instance.Prefab().Vars().IntV(varName, 0)
+	value := int32(pixelVal)
+
+	onChange := func() {
+		origPrefab := instance.Prefab()
+
+		newVars := dmvars.Set(origPrefab.Vars(), varName, strconv.Itoa(int(value)))
+		newPrefab := dmmprefab.New(dmmprefab.IdNone, origPrefab.Path(), newVars)
+		instance.SetPrefab(newPrefab)
+
+		p.editor.UpdateCanvasByCoords([]util.Point{instance.Coord()})
+	}
+	applyChange := func() {
+		p.sanitizeInstanceVar(instance, varName, "0")
+		dmmap.PrefabStorage.Put(instance.Prefab())
+		p.editor.InstanceSelect(instance)
+		go p.editor.CommitChanges("Quick Edit: " + label)
+	}
+
+	imgui.SetNextItemWidth(window.PointSize() * 50)
+	if imgui.DragInt(label+"##"+varName+p.editor.Dmm().Name, &value) {
+		onChange()
+	}
+
+	if imgui.IsItemDeactivatedAfterEdit() {
+		applyChange()
+	}
+
+	if _, mouseWheel := imgui.CurrentIO().MouseWheel(); mouseWheel != 0 && imgui.IsItemHovered() {
+		if mouseWheel > 0 {
+			value += 1
+		} else {
+			value -= 1
+		}
+		onChange()
+		p.lastScrollEdit = time.Now().UnixMilli()
+	}
+
+	if p.isScrollEdit() {
+		p.lastScrollEdit = 0
+		applyChange()
+	}
 }
 
 func (p *Panel) showNudgeOption(label string, xAxis bool, instance *dmminstance.Instance) {

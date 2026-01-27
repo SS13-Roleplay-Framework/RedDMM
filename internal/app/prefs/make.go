@@ -45,6 +45,24 @@ func Make(app App, prefs *Prefs) wsprefs.Prefs {
 				value:   &prefs.Editor.NudgeMode,
 				options: SaveNudgeModes,
 			},
+			stringPrefPrefab{
+				name:  "Obsolete Object Path",
+				desc:  "Type path to use when replacing missing /obj and /mob types. Leave empty to discard.",
+				label: "##obsolete_obj_path",
+				value: &prefs.Editor.ObsoleteObjectPath,
+			},
+			stringPrefPrefab{
+				name:  "Obsolete Turf Path",
+				desc:  "Type path to use when replacing missing /turf types. Leave empty to discard.",
+				label: "##obsolete_turf_path",
+				value: &prefs.Editor.ObsoleteTurfPath,
+			},
+			stringPrefPrefab{
+				name:  "Obsolete Area Path",
+				desc:  "Type path to use when replacing missing /area types. Leave empty to discard.",
+				label: "##obsolete_area_path",
+				value: &prefs.Editor.ObsoleteAreaPath,
+			},
 		},
 
 		wsprefs.GPControls: {

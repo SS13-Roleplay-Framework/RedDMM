@@ -101,9 +101,9 @@ Fixed an issue where the area bounding size for the Grab tool was off by 1.
 Since ancient times DreamMaker was teaching us that to open a map we need to open an environment first.<br>
 But things have changed...<br>
 Now there is no separate button to open either environment or a map. The "Open" button does all of that.<br>
-If there is no environment loaded, StrongDMM will try to find and open one. The search is recursive, bottom-up through the directories.<br>
+If there is no environment loaded, RedDMM will try to find and open one. The search is recursive, bottom-up through the directories.<br>
 
-Referencing to the new open flow, now you can pass any .dme/.dmm files to StrongDMM as startup arguments.<br>
+Referencing to the new open flow, now you can pass any .dme/.dmm files to RedDMM as startup arguments.<br>
 If you have passed only .dmm files, it will do the same as it is said above: automatically find and open .dme file for it.
 
 ### Improved access to recent environments and maps
@@ -113,7 +113,7 @@ Now, by default, it contains recent environments and maps. But when you have ope
 
 ### Available maps
 
-StrongDMM v1 had a one called feature. And now it is fully back-ported to the v2.<br>
+RedDMM v1 had a one called feature. And now it is fully back-ported to the v2.<br>
 The new version also is more robust than the previous one. It supports hotkeys to select a range of maps to open.<br>
 There were a bunch of requests to add an ability to open multiple maps at once, so now it is available.
 
@@ -191,7 +191,7 @@ Added the "Replace" tool. When enabled, it will replace the hovered instance wit
 
 ### Improvements and Fixes
 
-* Fixed self-update for Windows when StrongDMM executable was not on the C drive.
+* Fixed self-update for Windows when RedDMM executable was not on the C drive.
 * Unnecessary updates can now be ignored.
 * Added a preference to disable self-update checks on startup. (Not recommended)
 
@@ -208,9 +208,9 @@ Added the "Replace" tool. When enabled, it will replace the hovered instance wit
 
 # v2.1.0.alpha
 
-### Support StrongDMM!
+### Support RedDMM!
 
-If you enjoy StrongDMM and want to support the author, now you can! Find links to the support page in the editor and on the official GitHub page. Any form of donation is welcome. Your support motivates further development of StrongDMM!
+If you enjoy RedDMM and want to support the author, now you can! Find links to the support page in the editor and on the official GitHub page. Any form of donation is welcome. Your support motivates further development of RedDMM!
 
 ### Improvements and Fixes
 
@@ -242,7 +242,7 @@ Thus, you'll see and edit both of them at the same time. Try it with "Mirror Can
 ### New editing experience!
 
 The biggest problem of the default DM editor is the way how variables are edited. To do that you need to open a modal dialog.<br>
-Which is pretty annoying when you need to change a lot of stuff. The previous StrongDMM version repeated that approach.<br>
+Which is pretty annoying when you need to change a lot of stuff. The previous RedDMM version repeated that approach.<br>
 It had more features, yet the issue has not been solved.
 
 Version 2 introduces a totally new approach: variables are always available! Without additional dialogs!<br>

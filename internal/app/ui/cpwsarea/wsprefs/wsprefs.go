@@ -58,6 +58,9 @@ func (ws *WsPrefs) showContent() {
 			if pref, ok := pref.(OptionPref); ok {
 				showOptionPref(pref)
 			}
+			if pref, ok := pref.(StringPref); ok {
+				showStringPref(pref)
+			}
 			imgui.PopID()
 		}
 	}
@@ -132,5 +135,20 @@ func showHelp(helpText string) {
 		imgui.SameLine()
 		imgui.TextDisabled(icon.Help)
 		imguiext.SetItemHoveredTooltip(helpText)
+	}
+}
+
+func showStringPref(pref StringPref) {
+	markdown.ShowHeaderV(pref.Name, window.FontH3, style.ColorWhite)
+
+	imgui.PushTextWrapPos()
+	imgui.TextDisabled(pref.Desc)
+	showHelp(pref.Help)
+	imgui.PopTextWrapPos()
+
+	v := pref.FGet()
+	imgui.SetNextItemWidth(300 * window.PointSize())
+	if imgui.InputText(pref.Label, &v) {
+		pref.FSet(v)
 	}
 }

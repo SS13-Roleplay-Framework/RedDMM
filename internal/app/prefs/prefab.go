@@ -102,3 +102,31 @@ func (p boolPrefPrefab) make() any {
 
 	return pref
 }
+
+type stringPrefPrefab struct {
+	name  string
+	desc  string
+	label string
+	value *string
+	post  func(string)
+}
+
+func (p stringPrefPrefab) make() any {
+	pref := wsprefs.MakeStringPref()
+	pref.Name = p.name
+	pref.Desc = p.desc
+	pref.Label = p.label
+
+	pref.FGet = func() string {
+		return *p.value
+	}
+	pref.FSet = func(value string) {
+		log.Printf("preferences changing, [%s] to: %s", p.label, value)
+		*p.value = value
+		if p.post != nil {
+			p.post(value)
+		}
+	}
+
+	return pref
+}

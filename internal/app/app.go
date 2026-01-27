@@ -178,9 +178,9 @@ func getOrCreateInternalDir() string {
 	}
 
 	if runtime.GOOS == "windows" {
-		internalDir = userHomeDir + "/AppData/Roaming/StrongDMM"
+		internalDir = userHomeDir + "/AppData/Roaming/RedDMM"
 	} else {
-		internalDir = userHomeDir + "/.strongdmm"
+		internalDir = userHomeDir + "/.reddmm"
 	}
 	_ = os.MkdirAll(internalDir, os.ModePerm)
 

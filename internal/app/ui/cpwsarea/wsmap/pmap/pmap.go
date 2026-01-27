@@ -30,6 +30,7 @@ type App interface {
 	psettings.App
 
 	Prefs() prefs.Prefs
+	SetRandomizeDirection(bool)
 
 	LoadedEnvironment() *dmenv.Dme
 
