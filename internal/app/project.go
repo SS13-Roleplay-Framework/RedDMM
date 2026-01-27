@@ -226,7 +226,13 @@ func (a *app) loadMap(path string, workspace *workspace.Workspace) {
 		log.Print("ignoring map path add to the recent, since it's an outside resource")
 	}
 
-	dmm, unknownPrefabs := dmmap.New(a.loadedEnvironment, data, a.backupMap(path))
+	obsoleteCfg := dmmap.ObsoleteConfig{
+		ObjPath:  a.Prefs().Editor.ObsoleteObjectPath,
+		TurfPath: a.Prefs().Editor.ObsoleteTurfPath,
+		AreaPath: a.Prefs().Editor.ObsoleteAreaPath,
+	}
+
+	dmm, unknownPrefabs := dmmap.New(a.loadedEnvironment, data, a.backupMap(path), obsoleteCfg)
 	if a.layout.WsArea.OpenMap(dmm, workspace) {
 		a.layout.Prefabs.Sync()
 

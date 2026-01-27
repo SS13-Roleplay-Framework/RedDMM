@@ -3,6 +3,7 @@ package tilemenu
 import (
 	"sdmm/internal/app/command"
 	"sdmm/internal/app/prefs"
+	"sdmm/internal/app/ui/cppresets"
 	"sdmm/internal/app/ui/cpwsarea/wsmap/pmap/pquickedit"
 	"sdmm/internal/app/ui/shortcut"
 	"sdmm/internal/dmapi/dmenv"
@@ -39,6 +40,8 @@ type App interface {
 
 	Prefs() prefs.Prefs
 	LoadedEnvironment() *dmenv.Dme
+	
+	Presets() *cppresets.Presets
 }
 
 type editor interface {

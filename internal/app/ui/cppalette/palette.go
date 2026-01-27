@@ -33,6 +33,8 @@ type Palette struct {
 	categories []*Category
 	selectedCategory int
 	selectedPrefab *dmmprefab.Prefab
+	
+	loadedEnvPath string
 }
 
 func (p *Palette) Init(app App) {
@@ -55,6 +57,7 @@ func (p *Palette) AddCategory(name string) {
 		Prefabs: []*dmmprefab.Prefab{},
 	})
 	log.Print("palette category added:", name)
+	p.Save()
 }
 
 // RemoveCategory removes a category by index
@@ -63,6 +66,7 @@ func (p *Palette) RemoveCategory(idx int) {
 		name := p.categories[idx].Name
 		p.categories = append(p.categories[:idx], p.categories[idx+1:]...)
 		log.Print("palette category removed:", name)
+		p.Save()
 	}
 }
 
@@ -71,6 +75,7 @@ func (p *Palette) AddPrefabToCategory(categoryIdx int, prefab *dmmprefab.Prefab)
 	if categoryIdx >= 0 && categoryIdx < len(p.categories) {
 		p.categories[categoryIdx].Prefabs = append(p.categories[categoryIdx].Prefabs, prefab)
 		log.Print("prefab added to palette:", prefab.Path())
+		p.Save()
 	}
 }
 
@@ -80,6 +85,7 @@ func (p *Palette) RemovePrefabFromCategory(categoryIdx, prefabIdx int) {
 		cat := p.categories[categoryIdx]
 		if prefabIdx >= 0 && prefabIdx < len(cat.Prefabs) {
 			cat.Prefabs = append(cat.Prefabs[:prefabIdx], cat.Prefabs[prefabIdx+1:]...)
+			p.Save()
 		}
 	}
 }

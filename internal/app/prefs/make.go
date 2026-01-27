@@ -2,10 +2,21 @@ package prefs
 
 import (
 	"math"
+	"sort"
 
+	"sdmm/internal/app/themes"
 	"sdmm/internal/app/ui/cpwsarea/wsprefs"
 	"sdmm/internal/app/window"
 )
+
+var themeOptions []string
+
+func init() {
+	for k := range themes.Presets {
+		themeOptions = append(themeOptions, k)
+	}
+	sort.Strings(themeOptions)
+}
 
 type App interface {
 	UpdateScale()
@@ -63,6 +74,12 @@ func Make(app App, prefs *Prefs) wsprefs.Prefs {
 				label: "##obsolete_area_path",
 				value: &prefs.Editor.ObsoleteAreaPath,
 			},
+			boolPrefPrefab{
+				name:  "Suppress Obsolete Var Transfer Warnings",
+				desc:  "If enabled, no warning will be shown when variables cannot be transferred from an obsolete object to its replacement.",
+				label: "##suppress_obsolete_var_warnings",
+				value: &prefs.Editor.SuppressObsoleteVarWarning,
+			},
 		},
 
 		wsprefs.GPControls: {
@@ -106,6 +123,18 @@ func Make(app App, prefs *Prefs) wsprefs.Prefs {
 				max:   math.MaxInt,
 				value: &prefs.Interface.Fps,
 				post:  window.SetFps,
+			},
+			optionPrefPrefab{
+				name:    "Theme",
+				desc:    "Controls the application theme.",
+				label:   "##theme",
+				value:   &prefs.Interface.Theme,
+				options: themeOptions,
+				post: func(val string) {
+					if factory, ok := themes.Presets[val]; ok {
+						themes.Apply(factory())
+					}
+				},
 			},
 		},
 

@@ -5,6 +5,7 @@ import (
 	"sdmm/internal/app/ui/cpenvironment"
 	"sdmm/internal/app/ui/cppalette"
 	"sdmm/internal/app/ui/cpprefabs"
+	"sdmm/internal/app/ui/cppresets"
 	"sdmm/internal/app/ui/cpsearch"
 	"sdmm/internal/app/ui/cpvareditor"
 	"sdmm/internal/app/ui/cpwsarea"
@@ -57,6 +58,7 @@ type Layout struct {
 	Environment *cpenvironment.Environment
 	Palette     *cppalette.Palette
 	Prefabs     *cpprefabs.Prefabs
+	Presets     *cppresets.Presets
 	Search      *cpsearch.Search
 	WsArea      *cpwsarea.WsArea
 	VarEditor   *cpvareditor.VarEditor
@@ -72,6 +74,7 @@ func New(app app) *Layout {
 	l.Environment = new(cpenvironment.Environment)
 	l.Palette = new(cppalette.Palette)
 	l.Prefabs = new(cpprefabs.Prefabs)
+	l.Presets = cppresets.New()
 	l.Search = new(cpsearch.Search)
 	l.WsArea = new(cpwsarea.WsArea)
 	l.VarEditor = new(cpvareditor.VarEditor)
@@ -79,6 +82,7 @@ func New(app app) *Layout {
 	l.Environment.Init(app)
 	l.Palette.Init(app)
 	l.Prefabs.Init(app)
+	l.Presets.Init(app)
 	l.Search.Init(app)
 	l.WsArea.Init(app)
 	l.VarEditor.Init(app)

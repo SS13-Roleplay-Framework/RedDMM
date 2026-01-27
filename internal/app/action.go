@@ -8,9 +8,11 @@ import (
 
 	"sdmm/internal/app/prefs"
 	"sdmm/internal/app/render"
+	"sdmm/internal/app/render"
 	"sdmm/internal/app/ui/cpwsarea/wsmap"
 	"sdmm/internal/app/ui/cpwsarea/wsmap/pmap"
 	"sdmm/internal/app/ui/cpwsarea/wsmap/pmap/editor"
+	"sdmm/internal/app/ui/cppresets"
 	"sdmm/internal/dmapi/dmmap/dmminstance"
 	"sdmm/internal/env"
 
@@ -253,4 +255,30 @@ func (a *app) activeWsMap() (*wsmap.WsMap, bool) {
 		}
 	}
 	return nil, false
+}
+
+// AddToPalette adds the prefab to the palette.
+func (a *app) AddToPalette(prefab *dmmprefab.Prefab) {
+	a.ShowLayout("Palette", true)
+	
+	palette := a.layout.Palette
+	cats := palette.Categories()
+	
+	if len(cats) == 0 {
+		palette.AddCategory("Default")
+		cats = palette.Categories() // Refresh
+	}
+	
+	// Add to default or selected category
+	idx := palette.SelectedCategory()
+	if idx < 0 {
+		idx = 0
+	}
+	
+	palette.AddPrefabToCategory(idx, prefab)
+	palette.SetSelectedCategory(idx) // expanded
+}
+
+func (a *app) Presets() *cppresets.Presets {
+	return a.layout.Presets
 }

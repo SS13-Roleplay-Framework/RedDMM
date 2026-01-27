@@ -3,6 +3,9 @@ package cppalette
 import (
 	"fmt"
 
+	"sdmm/internal/app/ui/dialog"
+	"github.com/rs/zerolog/log"
+
 	"sdmm/internal/app/render"
 	"sdmm/internal/dmapi/dmmap/dmmdata/dmmprefab"
 	"sdmm/internal/imguiext/icon"
@@ -14,10 +17,18 @@ import (
 
 func (p *Palette) Process(_ int32) {
 	if !p.app.HasLoadedEnvironment() {
+		p.loadedEnvPath = "" // Reset
 		w.Layout{
 			w.TextDisabled("No environment loaded"),
 		}.Build()
 		return
+	}
+
+	// Check if we need to load palette for the current environment
+	currentEnv := p.app.LoadedEnvironment().RootDir
+	if p.loadedEnvPath != currentEnv {
+		p.Load() // This will populate p.categories
+		p.loadedEnvPath = currentEnv
 	}
 
 	p.showToolbar()
@@ -36,7 +47,33 @@ func (p *Palette) showToolbar() {
 				Tooltip("Remove selected category").
 				Round(true),
 		}),
+		w.SameLine(),
+		w.Button(icon.Upload, p.doImport).
+			Tooltip("Import Palette").
+			Round(true),
+		w.SameLine(),
+		w.Button(icon.Download, p.doExport).
+			Tooltip("Export Palette").
+			Round(true),
 	}.Build()
+}
+
+func (p *Palette) doImport() {
+	dialog.Open(dialog.NewInput("Import Palette", "File Path:", "", func(path string) {
+		if err := p.Import(path); err != nil {
+			log.Printf("import failed: %v", err)
+			dialog.Open(dialog.TypeInformation{Title: "Error", Information: fmt.Sprint(err)})
+		}
+	}))
+}
+
+func (p *Palette) doExport() {
+	dialog.Open(dialog.NewInput("Export Palette", "File Path:", "", func(path string) {
+		if err := p.Export(path); err != nil {
+			log.Printf("export failed: %v", err)
+			dialog.Open(dialog.TypeInformation{Title: "Error", Information: fmt.Sprint(err)})
+		}
+	}))
 }
 
 func (p *Palette) showCategories() {
