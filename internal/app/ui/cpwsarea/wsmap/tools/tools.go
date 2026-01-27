@@ -5,15 +5,10 @@ import (
 	"sdmm/internal/app/window"
 	"sdmm/internal/imguiext"
 
-	"sdmm/internal/app/prefs"
-	"sdmm/internal/app/window"
-	"sdmm/internal/imguiext"
-
 	"sdmm/internal/dmapi/dmmap"
 	"sdmm/internal/dmapi/dmmap/dmmdata"
 	"sdmm/internal/dmapi/dmmap/dmmdata/dmmprefab"
 	"sdmm/internal/dmapi/dmmap/dmminstance"
-	"sdmm/internal/dmapi/dmenv"
 	"sdmm/internal/util"
 
 	"github.com/rs/zerolog/log"
@@ -29,7 +24,6 @@ const (
 	TNReplace         = "Replace"
 	TNViewObsolete    = "View Obsolete"
 	TNReplaceObsolete = "Replace Obsolete"
-	TNStamp           = "Stamp"
 )
 
 func init() {
@@ -71,7 +65,6 @@ type editor interface {
 	HoveredInstance() *dmminstance.Instance
 	ZoomLevel() float32
 	Prefs() prefs.Prefs
-	LoadedEnvironment() *dmenv.Dme
 }
 
 var (
@@ -92,7 +85,6 @@ var (
 		TNReplace:         newReplace(),
 		TNViewObsolete:    newViewObsolete(),
 		TNReplaceObsolete: newReplaceObsolete(),
-		TNStamp:           newStamp(),
 	}
 
 	selectedToolName = TNAdd
@@ -146,12 +138,6 @@ func process(altBehaviour bool) {
 
 func OnMouseMove() {
 	processSelectedToolMove()
-}
-
-func SetStamp(data *dmmdata.DmmData) {
-	if t, ok := tools[TNStamp].(*ToolStamp); ok {
-		t.SetStamp(data)
-	}
 }
 
 func SelectedTiles() []util.Point {

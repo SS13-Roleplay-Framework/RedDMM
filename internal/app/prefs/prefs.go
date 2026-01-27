@@ -10,7 +10,6 @@ type Prefs struct {
 type Interface struct {
 	Scale int
 	Fps   int
-	Theme string
 }
 
 type Controls struct {
@@ -30,8 +29,6 @@ type Editor struct {
 	ObsoleteAreaPath   string
 	// Randomize direction when placing objects
 	RandomizeDirection bool
-	// Suppress warning when transferring vars from obsolete objects
-	SuppressObsoleteVarWarning bool
 }
 
 type Application struct {

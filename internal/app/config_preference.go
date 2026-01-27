@@ -75,8 +75,6 @@ func (a *app) loadPreferencesConfig() {
 				ObsoleteObjectPath: "/obj/obselete",
 				ObsoleteTurfPath:   "/turf/obselete",
 				ObsoleteAreaPath:   "/area/obselete",
-				RandomizeDirection: false,
-				SuppressObsoleteVarWarning: false,
 			},
 			Application: prefs.Application{
 				CheckForUpdates: true,

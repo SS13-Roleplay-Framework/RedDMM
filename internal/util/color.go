@@ -1,8 +1,6 @@
 package util
 
 import (
-	"image/color"
-
 	"github.com/SpaiR/imgui-go"
 	"github.com/mazznoer/csscolorparser"
 )
@@ -37,15 +35,6 @@ func (c Color) B() float32 {
 
 func (c Color) A() float32 {
 	return c.a
-}
-
-func (c Color) ImageColor() color.RGBA {
-	return color.RGBA{
-		R: uint8(c.r * 255),
-		G: uint8(c.g * 255),
-		B: uint8(c.b * 255),
-		A: uint8(c.a * 255),
-	}
 }
 
 var (

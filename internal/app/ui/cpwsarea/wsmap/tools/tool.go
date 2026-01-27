@@ -4,11 +4,7 @@ import (
 	"math/rand"
 	"strconv"
 
-	"math/rand"
-	"strconv"
-
 	"sdmm/internal/dmapi/dm"
-	"sdmm/internal/dmapi/dmenv"
 	"sdmm/internal/dmapi/dmicon"
 	"sdmm/internal/dmapi/dmmap"
 	"sdmm/internal/dmapi/dmmap/dmmdata/dmmprefab"

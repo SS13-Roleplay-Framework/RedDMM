@@ -17,8 +17,7 @@ import (
 	"sdmm/internal/util"
 	"sdmm/internal/util/slice"
 
-	"sdmm/internal/app/ui/cpwsarea/wsmap/tools"
-	"sdmm/internal/app/ui/dialog"
+	dial "sdmm/internal/app/ui/dialog"
 
 	"github.com/SpaiR/imgui-go"
 	"github.com/rs/zerolog/log"
@@ -171,17 +170,6 @@ func (a *app) DoSelectPrefab(prefab *dmmprefab.Prefab) {
 // DoSelectPrefabByPath globally selects a prefab with provided type path.
 func (a *app) DoSelectPrefabByPath(path string) {
 	log.Print("select prefab by path:", path)
-	if strings.HasPrefix(path, "/map_stamp/") {
-		name := strings.TrimPrefix(path, "/map_stamp/")
-		data, err := a.Presets().LoadPresetDmm(name)
-		if err != nil {
-			log.Printf("failed to load preset [%s]: %v", name, err)
-			return
-		}
-		tools.SetSelected(tools.TNStamp)
-		tools.SetStamp(data)
-		return
-	}
 	a.DoSelectPrefab(dmmap.PrefabStorage.Initial(path))
 }
 

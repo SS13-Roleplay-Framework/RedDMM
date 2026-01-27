@@ -6,7 +6,6 @@ import (
 	"sdmm/internal/app/config"
 	"sdmm/internal/app/prefs"
 	"sdmm/internal/app/ui/component"
-	"sdmm/internal/app/ui/cppresets"
 	"sdmm/internal/app/ui/shortcut"
 	"sdmm/internal/dmapi/dm"
 
@@ -28,8 +27,6 @@ type App interface {
 	ConfigRegister(config.Config)
 	ConfigFind(name string) config.Config
 	Prefs() prefs.Prefs
-
-	Presets() *cppresets.Presets
 }
 
 // Only 25 nodes can be loaded per one process tick.

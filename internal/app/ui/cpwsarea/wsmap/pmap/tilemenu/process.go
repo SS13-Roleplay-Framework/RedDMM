@@ -3,8 +3,6 @@ package tilemenu
 import (
 	"fmt"
 
-	"sdmm/internal/app/ui/dialog"
-	"sdmm/internal/app/ui/cpwsarea/wsmap/tools"
 	"sdmm/internal/app/ui/layout/lnode"
 	"sdmm/internal/dmapi/dm"
 	"sdmm/internal/dmapi/dmicon"
@@ -38,7 +36,7 @@ func (t *TileMenu) Process() {
 }
 
 func (t *TileMenu) showControls() {
-	layout := w.Layout{
+	w.Layout{
 		w.MenuItem(t.tile.Coord.String(), nil).Icon(icon.Help).Enabled(false),
 		w.Separator(),
 		w.MenuItem("Undo", t.app.DoUndo).
@@ -63,41 +61,13 @@ func (t *TileMenu) showControls() {
 		w.MenuItem("Delete", t.app.DoDelete).
 			Icon(icon.Eraser).
 			Shortcut("Delete"),
-	}
-
-	selectedTiles := tools.SelectedTiles()
-	if len(selectedTiles) > 1 || tools.IsSelected(tools.TNGrab) {
-		layout = append(layout,
-			w.Separator(),
-			w.MenuItem("Save as Stamp...", t.doSaveAsStamp(selectedTiles)).
-				Icon(icon.ContentSave),
-		)
-	}
-
-	layout = append(layout,
 		w.Separator(),
 		w.Custom(func() {
 			for idx, instance := range t.tile.Instances().Sorted() {
 				t.showInstance(instance, idx)
 			}
 		}),
-	)
-
-	layout.Build()
-}
-
-func (t *TileMenu) doSaveAsStamp(tiles []util.Point) func() {
-	return func() {
-		dialog.Open(dialog.NewInput("Save as Stamp", "Name:", "", func(name string) {
-			if name != "" {
-				if err := t.app.Presets().SaveSelectionAsStamp(name, tiles, t.editor.Dmm()); err != nil {
-					log.Printf("failed to save stamp: %v", err)
-					dialog.Open(dialog.TypeInformation{Title: "Error", Information: fmt.Sprint(err)})
-				}
-			}
-		}))
-		imgui.CloseCurrentPopup()
-	}
+	}.Build()
 }
 
 func (t *TileMenu) showInstance(i *dmminstance.Instance, idx int) {

@@ -11,7 +11,6 @@ import (
 	"sdmm/internal/app/command"
 	"sdmm/internal/app/config"
 	"sdmm/internal/app/render/brush"
-	"sdmm/internal/app/themes"
 	"sdmm/internal/app/ui/dialog"
 	"sdmm/internal/app/ui/layout"
 	"sdmm/internal/app/ui/menu"
@@ -108,14 +107,6 @@ func (a *app) initialize() {
 	a.loadConfig()
 	a.loadProjectConfig()
 	a.loadPreferencesConfig()
-
-	// Apply theme
-	themeName := a.preferencesConfig().Prefs.Interface.Theme
-	if factory, ok := themes.Presets[themeName]; ok {
-		themes.Apply(factory())
-	} else {
-		themes.Apply(themes.Default)
-	}
 
 	a.runBackgroundConfigSave()
 

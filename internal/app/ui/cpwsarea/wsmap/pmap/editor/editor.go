@@ -6,7 +6,6 @@ import (
 	"sdmm/internal/app/ui/cpwsarea/wsmap/pmap/canvas"
 	"sdmm/internal/app/ui/cpwsarea/wsmap/pmap/overlay"
 	"sdmm/internal/dmapi/dm"
-	"sdmm/internal/dmapi/dmenv"
 	"sdmm/internal/dmapi/dmmap"
 	"sdmm/internal/dmapi/dmmap/dmmdata/dmmprefab"
 	"sdmm/internal/dmapi/dmmap/dmminstance"
@@ -169,8 +168,4 @@ func (e *Editor) ZoomLevel() float32 {
 
 func (e *Editor) Prefs() prefs.Prefs {
 	return e.app.Prefs()
-}
-
-func (e *Editor) LoadedEnvironment() *dmenv.Dme {
-	return e.app.LoadedEnvironment()
 }

@@ -2,19 +2,15 @@ package cpenvironment
 
 import (
 	"fmt"
-	"os"
-	"path/filepath"
 	"strings"
 
-	"sdmm/internal/app/ui/dialog"
+	"sdmm/internal/imguiext/style"
+
 	"sdmm/internal/dmapi/dmenv"
 	"sdmm/internal/imguiext/icon"
-	"sdmm/internal/imguiext/style"
 	w "sdmm/internal/imguiext/widget"
-	"sdmm/internal/rsc"
 
 	"github.com/SpaiR/imgui-go"
-	"github.com/rs/zerolog/log"
 )
 
 func (e *Environment) Process(int32) {
@@ -80,78 +76,8 @@ func (e *Environment) showSettingsButton() {
 		imgui.Text("Icon Size")
 		imgui.SameLine()
 		imgui.SliderInt("##icon_size", &e.config().NodeScale, 50, 300)
-		
-		imgui.Separator()
-		if imgui.MenuItem("Install Obsolete Module...") {
-			e.openInstallObsoleteModuleDialog()
-		}
-		
 		imgui.EndPopup()
 	}
-}
-
-func (e *Environment) openInstallObsoleteModuleDialog() {
-	dialog.Open(dialog.NewInstallObsoleteModule(e.installObsoleteModule))
-}
-
-func (e *Environment) installObsoleteModule(targetRel string) {
-	if e.app.LoadedEnvironment() == nil {
-		return
-	}
-
-	rootDir := e.app.LoadedEnvironment().RootDir
-	targetDir := filepath.Join(rootDir, targetRel)
-
-	log.Printf("installing obsolete module to: %s", targetDir)
-
-	if err := os.MkdirAll(targetDir, 0755); err != nil {
-		log.Printf("failed to create directory: %v", err)
-		dialog.Open(dialog.TypeInformation{
-			Title:       "Error",
-			Information: fmt.Sprintf("Failed to create directory:\n%v", err),
-		})
-		return
-	}
-
-	dmPath := filepath.Join(targetDir, "obselete.dm")
-	if err := os.WriteFile(dmPath, []byte(rsc.ObsoleteDM), 0644); err != nil {
-		log.Printf("failed to write obselete.dm: %v", err)
-		dialog.Open(dialog.TypeInformation{
-			Title:       "Error",
-			Information: fmt.Sprintf("Failed to write obselete.dm:\n%v", err),
-		})
-		return
-	}
-
-	dmiPath := filepath.Join(targetDir, "obselete.dmi")
-	if err := os.WriteFile(dmiPath, rsc.ObsoleteDMI, 0644); err != nil {
-		log.Printf("failed to write obselete.dmi: %v", err)
-	}
-
-	// append to DME
-	dmePath := e.app.LoadedEnvironment().DmePath
-	relPath, err := filepath.Rel(filepath.Dir(dmePath), dmPath)
-	if err != nil {
-		log.Printf("failed to get relative path: %v", err)
-		return
-	}
-	relPath = strings.ReplaceAll(relPath, "\\", "/")
-
-	f, err := os.OpenFile(dmePath, os.O_APPEND|os.O_WRONLY, 0644)
-	if err != nil {
-		log.Printf("failed to open DME: %v", err)
-		return
-	}
-	defer f.Close()
-
-	if _, err := f.WriteString(fmt.Sprintf("\n#include \"%s\"\n", relPath)); err != nil {
-		log.Printf("failed to append to DME: %v", err)
-	}
-	
-	dialog.Open(dialog.TypeInformation{
-		Title:       "Success",
-		Information: fmt.Sprintf("Successfully installed obsolete module to:\n%s\n\nAdded include to DME.", targetRel),
-	})
 }
 
 func (e *Environment) showTree() {
@@ -161,60 +87,11 @@ func (e *Environment) showTree() {
 			e.showPathBranch("/turf")
 			e.showPathBranch("/obj")
 			e.showPathBranch("/mob")
-			e.showMapStampBranch()
 		} else {
 			e.showFilteredNodes()
 		}
 	}
 	imgui.EndChild()
-}
-
-func (e *Environment) showMapStampBranch() {
-	presets := e.app.Presets().Items()
-	if len(presets) == 0 {
-		return
-	}
-
-	rootPath := "/map_stamp"
-
-	// Root node
-	imgui.PushStyleVarVec2(imgui.StyleVarFramePadding, e.calcTreeNodePadding("map_stamp"))
-	
-	// Flags
-	flags := int(imgui.TreeNodeFlagsSpanAvailWidth | imgui.TreeNodeFlagsOpenOnArrow | imgui.TreeNodeFlagsOpenOnDoubleClick)
-	if rootPath == e.selectedPath {
-		flags |= int(imgui.TreeNodeFlagsSelected)
-	}
-	
-	opened := imgui.TreeNodeV("map_stamp", imgui.TreeNodeFlags(flags))
-	imgui.PopStyleVar()
-
-	// Handle selection for root
-	if imgui.IsItemClicked() && e.selectedPath != rootPath {
-		// e.app.DoSelectPrefabByPath(rootPath) // Cannot select virtual root yet?
-		e.selectedPath = rootPath
-	}
-
-	if opened {
-		for _, preset := range presets {
-			path := rootPath + "/" + preset.Name
-			
-			imgui.PushStyleVarVec2(imgui.StyleVarFramePadding, e.calcTreeNodePadding(preset.Name))
-			
-			nodeFlags := int(imgui.TreeNodeFlagsSpanAvailWidth | imgui.TreeNodeFlagsLeaf | imgui.TreeNodeFlagsNoTreePushOnOpen)
-			if path == e.selectedPath {
-				nodeFlags |= int(imgui.TreeNodeFlagsSelected)
-			}
-			
-			imgui.TreeNodeV(preset.Name, imgui.TreeNodeFlags(nodeFlags))
-			imgui.PopStyleVar()
-			
-			if imgui.IsItemClicked() && e.selectedPath != path {
-				e.app.DoSelectPrefabByPath(path)
-			}
-		}
-		imgui.TreePop()
-	}
 }
 
 func (e *Environment) showFilteredNodes() {

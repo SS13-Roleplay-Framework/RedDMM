@@ -7,7 +7,6 @@ import (
 
 	"sdmm/internal/dmapi/dmenv"
 	"sdmm/internal/dmapi/dmmap/dmmdata"
-	"sdmm/internal/dmapi/dmvars"
 	"sdmm/internal/util"
 
 	"github.com/rs/zerolog/log"
@@ -105,13 +104,7 @@ func tileIndex(maxX, maxY, x, y, z int) int {
 	return maxX*maxY*(z-1) + maxX*(y-1) + (x - 1)
 }
 
-type ObsoleteConfig struct {
-	ObjPath  string
-	TurfPath string
-	AreaPath string
-}
-
-func New(dme *dmenv.Dme, data *dmmdata.DmmData, backup string, obsoleteCfg ObsoleteConfig) (dmm *Dmm, unknownPrefabs map[string]*dmmprefab.Prefab) {
+func New(dme *dmenv.Dme, data *dmmdata.DmmData, backup string) (dmm *Dmm, unknownPrefabs map[string]*dmmprefab.Prefab) {
 	unknownPrefabs = make(map[string]*dmmprefab.Prefab)
 	dmm = &Dmm{
 		Name:  filepath.Base(data.Filepath),
@@ -139,31 +132,6 @@ func New(dme *dmenv.Dme, data *dmmdata.DmmData, backup string, obsoleteCfg Obsol
 					} else {
 						log.Print("unknown prefab:", prefab.Path())
 						unknownPrefabs[prefab.Path()] = prefab
-
-						// Try to replace with obsolete object if configured
-						var replacePath string
-						if util.IsPath(prefab.Path(), "/turf") {
-							replacePath = obsoleteCfg.TurfPath
-						} else if util.IsPath(prefab.Path(), "/area") {
-							replacePath = obsoleteCfg.AreaPath
-						} else {
-							// Default to obj for /obj, /mob and anything else
-							replacePath = obsoleteCfg.ObjPath
-						}
-
-						if replacePath != "" {
-							// Create replacement prefab
-							// Note: We are creating a new prefab, not modifying the original unknown one
-							// We store original info in vars
-							vars := dmvars.Make()
-							vars.Set("original_type", prefab.Path())
-							vars.Set("original_name", prefab.Vars().TextV("name", ""))
-							
-							// TODO: Try to serialize original vars? For now just basic info.
-							
-							replacement := dmmprefab.New(dmmprefab.IdNone, replacePath, &vars)
-							tile.InstancesAdd(PrefabStorage.Put(replacement))
-						}
 					}
 				}
 

@@ -21,7 +21,6 @@ type App interface {
 	ShowLayout(name string, focus bool)
 	CurrentEditor() *editor.Editor
 	LoadedEnvironment() *dmenv.Dme
-	AddToPalette(prefab *dmmprefab.Prefab)
 }
 
 type Prefabs struct {

@@ -40,9 +40,6 @@ func (p *Prefabs) showContextMenu(node *prefabNode) {
 				Icon(icon.ContentCopy),
 			w.MenuItem("Copy Prefab ID", p.doCopyId(node)).
 				Icon(icon.ContentCopy),
-			w.Separator(),
-			w.MenuItem("Add to Palette...", p.doAddToPalette(node)).
-				Icon(icon.Star),
 		}.Build()
 		imgui.EndPopup()
 	}
@@ -59,13 +56,6 @@ func (*Prefabs) doCopyType(node *prefabNode) func() {
 	return func() {
 		log.Print("do copy prefab type:", node.orig.Path())
 		platform.SetClipboard(node.orig.Path())
-	}
-}
-
-func (p *Prefabs) doAddToPalette(node *prefabNode) func() {
-	return func() {
-		log.Print("do add to palette:", node.orig.Path())
-		p.app.AddToPalette(node.orig)
 	}
 }
 
