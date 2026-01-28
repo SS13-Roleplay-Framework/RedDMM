@@ -15,15 +15,13 @@ import (
 )
 
 const (
-	TNAdd             = "Add"
-	TNFill            = "Fill"
-	TNGrab            = "Grab"
-	TNMove            = "Move"
-	TNPick            = "Pick"
-	TNDelete          = "Delete"
-	TNReplace         = "Replace"
-	TNViewObsolete    = "View Obsolete"
-	TNReplaceObsolete = "Replace Obsolete"
+	TNAdd     = "Add"
+	TNFill    = "Fill"
+	TNGrab    = "Grab"
+	TNMove    = "Move"
+	TNPick    = "Pick"
+	TNDelete  = "Delete"
+	TNReplace = "Replace"
 )
 
 func init() {

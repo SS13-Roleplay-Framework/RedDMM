@@ -97,15 +97,3 @@ func getIconMaxDirs(vars *dmvars.Variables) int32 {
 	return int32(state.Dirs)
 }
 
-// Direction mapping for random selection (duplicated from pquickedit for now)
-var _relativeIndexToDir = map[int32]int{
-	1: 1, // NORTH
-	2: 2, // SOUTH
-	3: 4, // EAST
-	4: 8, // WEST
-	5: 5, // NORTHEAST
-	6: 6, // SOUTHWEST
-	7: 9, // NORTHWEST
-	8: 10, // SOUTHEAST
-}
-
