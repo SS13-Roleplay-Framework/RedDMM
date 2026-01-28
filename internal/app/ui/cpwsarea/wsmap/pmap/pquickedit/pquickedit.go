@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"sdmm/internal/app/prefs"
+	"sdmm/internal/app/ui/cpwsarea/wsmap/tools"
 	"sdmm/internal/app/window"
 	"sdmm/internal/dmapi/dm"
 	"sdmm/internal/dmapi/dmenv"
@@ -38,6 +39,14 @@ type Panel struct {
 
 	// Usable for modify by scroll.
 	lastScrollEdit int64
+
+	// Randomize direction when placing objects (only used when Add tool is active).
+	randomizeDir bool
+}
+
+// RandomizeDir returns whether randomize direction is enabled.
+func (p *Panel) RandomizeDir() bool {
+	return p.randomizeDir
 }
 
 func New(app App, editor editor) *Panel {
@@ -55,11 +64,78 @@ func (p *Panel) Process() {
 
 func (p *Panel) ProcessV(instance *dmminstance.Instance) {
 	imgui.BeginDisabledV(!dm.IsMovable(instance.Prefab().Path()))
-	p.showNudgeOption("Nudge X", true, instance)
-	p.showNudgeOption("Nudge Y", false, instance)
-	imgui.EndDisabled()
 
+	// Randomize direction checkbox - only visible when Add tool is selected
+	if tools.IsSelected(tools.TNAdd) {
+		if imgui.Checkbox("##randomize_dir", &p.randomizeDir) {
+			// State is stored in panel field, persists while panel exists
+		}
+		if imgui.IsItemHovered() {
+			imgui.SetTooltip("Randomize direction from available icon directions when placing.")
+		}
+		imgui.SameLine()
+	}
+
+	// Direction slider
 	p.showDirOption(instance)
+	imgui.SameLine()
+
+	// All 4 nudge values with compact labels
+	p.showNudgeValue("X", "pixel_x", instance)
+	imgui.SameLine()
+	p.showNudgeValue("Y", "pixel_y", instance)
+	imgui.SameLine()
+	p.showNudgeValue("Z", "pixel_z", instance)
+	imgui.SameLine()
+	p.showNudgeValue("W", "pixel_w", instance)
+
+	imgui.EndDisabled()
+}
+
+// showNudgeValue displays a compact nudge control for a specific variable.
+func (p *Panel) showNudgeValue(label, varName string, instance *dmminstance.Instance) {
+	pixelVal := instance.Prefab().Vars().IntV(varName, 0)
+	value := int32(pixelVal)
+
+	onChange := func() {
+		origPrefab := instance.Prefab()
+
+		newVars := dmvars.Set(origPrefab.Vars(), varName, strconv.Itoa(int(value)))
+		newPrefab := dmmprefab.New(dmmprefab.IdNone, origPrefab.Path(), newVars)
+		instance.SetPrefab(newPrefab)
+
+		p.editor.UpdateCanvasByCoords([]util.Point{instance.Coord()})
+	}
+	applyChange := func() {
+		p.sanitizeInstanceVar(instance, varName, "0")
+		dmmap.PrefabStorage.Put(instance.Prefab())
+		p.editor.InstanceSelect(instance)
+		go p.editor.CommitChanges("Quick Edit: " + label)
+	}
+
+	imgui.SetNextItemWidth(window.PointSize() * 40)
+	if imgui.DragInt(label+"##"+varName+p.editor.Dmm().Name, &value) {
+		onChange()
+	}
+
+	if imgui.IsItemDeactivatedAfterEdit() {
+		applyChange()
+	}
+
+	if _, mouseWheel := imgui.CurrentIO().MouseWheel(); mouseWheel != 0 && imgui.IsItemHovered() {
+		if mouseWheel > 0 {
+			value += 1
+		} else {
+			value -= 1
+		}
+		onChange()
+		p.lastScrollEdit = time.Now().UnixMilli()
+	}
+
+	if p.isScrollEdit() {
+		p.lastScrollEdit = 0
+		applyChange()
+	}
 }
 
 func (p *Panel) showNudgeOption(label string, xAxis bool, instance *dmminstance.Instance) {

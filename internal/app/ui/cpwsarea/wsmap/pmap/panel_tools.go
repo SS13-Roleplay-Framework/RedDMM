@@ -26,6 +26,9 @@ var (
 		tools.TNPick,
 		tools.TNDelete,
 		tools.TNReplace,
+		tSeparator,
+		tools.TNViewObsolete,
+		tools.TNReplaceObsolete,
 	}
 
 	toolsDesc = map[string]toolDesc{
@@ -109,6 +112,26 @@ var (
 				w.TextFrame("Hold R"),
 				w.Separator(),
 				w.Text("Replace the hovered instance with the selected object"),
+			},
+		},
+		tools.TNViewObsolete: {
+			btnIcon: icon.Eye,
+			tooltip: w.Layout{
+				w.AlignTextToFramePadding(),
+				w.Text(tools.TNViewObsolete),
+				w.Separator(),
+				w.Text("View information about obsolete objects"),
+				w.Text("Click on an obsolete object to see its original path and variables"),
+			},
+		},
+		tools.TNReplaceObsolete: {
+			btnIcon: icon.Wrench,
+			tooltip: w.Layout{
+				w.AlignTextToFramePadding(),
+				w.Text(tools.TNReplaceObsolete),
+				w.Separator(),
+				w.Text("Replace obsolete objects with a new type"),
+				w.Text("Select a type in the Environment tree, then click obsolete objects"),
 			},
 		},
 	}

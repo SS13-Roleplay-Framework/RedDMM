@@ -226,11 +226,18 @@ func (a *app) loadMap(path string, workspace *workspace.Workspace) {
 		log.Print("ignoring map path add to the recent, since it's an outside resource")
 	}
 
-	dmm, unknownPrefabs := dmmap.New(a.loadedEnvironment, data, a.backupMap(path))
+	// Create obsolete config from preferences
+	obsConfig := dmmap.ObsoleteConfig{
+		ObjectPath: a.preferenceConfig.Prefs.Editor.ObsoleteObjectPath,
+		TurfPath:   a.preferenceConfig.Prefs.Editor.ObsoleteTurfPath,
+		AreaPath:   a.preferenceConfig.Prefs.Editor.ObsoleteAreaPath,
+	}
+
+	dmm, unknownPrefabs := dmmap.NewWithObsoleteConfig(a.loadedEnvironment, data, a.backupMap(path), obsConfig)
 	if a.layout.WsArea.OpenMap(dmm, workspace) {
 		a.layout.Prefabs.Sync()
 
-		// TODO: processing for unknown prefabs
+		// Show info about unknown prefabs that were replaced or discarded
 		if len(unknownPrefabs) != 0 {
 			// Collect keys
 			var prefabPaths []string
@@ -247,13 +254,27 @@ func (a *app) loadMap(path string, workspace *workspace.Workspace) {
 				prefabsNames += " - " + path + "\n"
 			}
 
-			dialog.Open(dialog.TypeInformation{
-				Title: "Unknown Types [WIP]",
-				Information: fmt.Sprintf(
+			// Check if obsolete replacement is configured
+			hasReplacement := obsConfig.ObjectPath != "" || obsConfig.TurfPath != "" || obsConfig.AreaPath != ""
+			var infoMsg string
+			if hasReplacement {
+				infoMsg = fmt.Sprintf(
+					"Unknown types on the map: %s\n"+
+						"Types below have been replaced with obsolete placeholders:\n"+
+						"%s\n"+
+						"Use the 'View Obsolete' and 'Replace Obsolete' tools to inspect and fix them.", dmm.Name, prefabsNames,
+				)
+			} else {
+				infoMsg = fmt.Sprintf(
 					"There are unknown types on the map: %s\n"+
 						"Types below will be discarded on save:\n"+
 						"%s", dmm.Name, prefabsNames,
-				),
+				)
+			}
+
+			dialog.Open(dialog.TypeInformation{
+				Title:       "Unknown Types",
+				Information: infoMsg,
 			})
 		}
 	}

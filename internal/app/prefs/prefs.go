@@ -23,6 +23,10 @@ type Editor struct {
 	CodeEditor        string
 	NudgeMode         string
 	SanitizeVariables bool
+	// Obsolete object replacement paths
+	ObsoleteObjectPath string
+	ObsoleteTurfPath   string
+	ObsoleteAreaPath   string
 }
 
 type Application struct {

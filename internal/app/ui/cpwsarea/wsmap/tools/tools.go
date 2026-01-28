@@ -15,13 +15,15 @@ import (
 )
 
 const (
-	TNAdd     = "Add"
-	TNFill    = "Fill"
-	TNGrab    = "Grab"
-	TNMove    = "Move"
-	TNPick    = "Pick"
-	TNDelete  = "Delete"
-	TNReplace = "Replace"
+	TNAdd             = "Add"
+	TNFill            = "Fill"
+	TNGrab            = "Grab"
+	TNMove            = "Move"
+	TNPick            = "Pick"
+	TNDelete          = "Delete"
+	TNReplace         = "Replace"
+	TNViewObsolete    = "View Obsolete"
+	TNReplaceObsolete = "Replace Obsolete"
 )
 
 func init() {
@@ -74,19 +76,42 @@ var (
 	oldCoord util.Point
 
 	tools = map[string]Tool{
-		TNAdd:     newAdd(),
-		TNFill:    newFill(),
-		TNGrab:    newGrab(),
-		TNMove:    newMove(),
-		TNPick:    newPick(),
-		TNDelete:  newDelete(),
-		TNReplace: newReplace(),
+		TNAdd:             newAdd(),
+		TNFill:            newFill(),
+		TNGrab:            newGrab(),
+		TNMove:            newMove(),
+		TNPick:            newPick(),
+		TNDelete:          newDelete(),
+		TNReplace:         newReplace(),
+		TNViewObsolete:    newViewObsolete(),
+		TNReplaceObsolete: newReplaceObsolete(),
 	}
 
 	selectedToolName = TNAdd
 
 	startedTool Tool
+
+	// randomDirProvider allows accessing randomize direction state from external packages
+	randomDirProvider RandomDirProvider
 )
+
+// RandomDirProvider is an interface for getting randomize direction state.
+type RandomDirProvider interface {
+	RandomizeDir() bool
+}
+
+// SetRandomDirProvider sets the provider for randomize direction state.
+func SetRandomDirProvider(provider RandomDirProvider) {
+	randomDirProvider = provider
+}
+
+// GetRandomizeDir returns whether randomize direction is enabled.
+func GetRandomizeDir() bool {
+	if randomDirProvider == nil {
+		return false
+	}
+	return randomDirProvider.RandomizeDir()
+}
 
 func SetSelected(toolName string) Tool {
 	if selectedToolName != toolName {

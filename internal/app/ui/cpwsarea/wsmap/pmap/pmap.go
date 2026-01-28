@@ -257,6 +257,7 @@ func (p *PaneMap) prepareTools() {
 	tools.SetEditor(p.editor)
 	tools.SetCanvasState(p.canvasState)
 	tools.SetCanvasControl(p.canvasControl)
+	tools.SetRandomDirProvider(p.pQuickEdit)
 }
 
 func (p *PaneMap) showCanvas() {

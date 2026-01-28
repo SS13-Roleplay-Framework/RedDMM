@@ -105,6 +105,10 @@ func tileIndex(maxX, maxY, x, y, z int) int {
 }
 
 func New(dme *dmenv.Dme, data *dmmdata.DmmData, backup string) (dmm *Dmm, unknownPrefabs map[string]*dmmprefab.Prefab) {
+	return NewWithObsoleteConfig(dme, data, backup, DefaultObsoleteConfig())
+}
+
+func NewWithObsoleteConfig(dme *dmenv.Dme, data *dmmdata.DmmData, backup string, obsConfig ObsoleteConfig) (dmm *Dmm, unknownPrefabs map[string]*dmmprefab.Prefab) {
 	unknownPrefabs = make(map[string]*dmmprefab.Prefab)
 	dmm = &Dmm{
 		Name:  filepath.Base(data.Filepath),
@@ -132,6 +136,13 @@ func New(dme *dmenv.Dme, data *dmmdata.DmmData, backup string) (dmm *Dmm, unknow
 					} else {
 						log.Print("unknown prefab:", prefab.Path())
 						unknownPrefabs[prefab.Path()] = prefab
+
+						// Try to create an obsolete replacement
+						obsoletePrefab := CreateObsoletePrefab(dme, prefab, obsConfig)
+						if obsoletePrefab != nil {
+							tile.InstancesAdd(PrefabStorage.Put(obsoletePrefab))
+							log.Print("replaced with obsolete:", obsoletePrefab.Path())
+						}
 					}
 				}
 

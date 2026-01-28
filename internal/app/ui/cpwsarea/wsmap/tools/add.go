@@ -1,7 +1,13 @@
 package tools
 
 import (
+	"math/rand"
+	"strconv"
+
 	"sdmm/internal/app/ui/cpwsarea/wsmap/pmap/overlay"
+	"sdmm/internal/dmapi/dmicon"
+	"sdmm/internal/dmapi/dmmap/dmmdata/dmmprefab"
+	"sdmm/internal/dmapi/dmvars"
 	"sdmm/internal/util"
 )
 
@@ -45,8 +51,14 @@ func (t *ToolAdd) onMove(coord util.Point) {
 	if prefab, ok := ed.SelectedPrefab(); ok && !t.editedTiles[coord] {
 		t.editedTiles[coord] = true // Don't add to the same tile twice
 
+		// Apply random direction if enabled
+		finalPrefab := prefab
+		if GetRandomizeDir() {
+			finalPrefab = t.applyRandomDir(prefab)
+		}
+
 		tile := ed.Dmm().GetTile(coord)
-		t.basicPrefabAdd(tile, prefab)
+		t.basicPrefabAdd(tile, finalPrefab)
 
 		ed.UpdateCanvasByCoords([]util.Point{coord})
 	}
@@ -58,3 +70,42 @@ func (t *ToolAdd) onStop(util.Point) {
 		go ed.CommitChanges("Add Atoms")
 	}
 }
+
+// applyRandomDir returns a new prefab with a random direction based on available icon directions.
+func (t *ToolAdd) applyRandomDir(prefab *dmmprefab.Prefab) *dmmprefab.Prefab {
+	maxDirs := getIconMaxDirs(prefab.Vars())
+	if maxDirs <= 1 {
+		return prefab // No directions to randomize
+	}
+
+	// Get a random direction based on available directions
+	randomIndex := int32(rand.Intn(int(maxDirs))) + 1
+	randomDir := _relativeIndexToDir[randomIndex]
+
+	newVars := dmvars.Set(prefab.Vars(), "dir", strconv.Itoa(randomDir))
+	return dmmprefab.New(dmmprefab.IdNone, prefab.Path(), newVars)
+}
+
+// getIconMaxDirs returns the number of directions available for the prefab's icon.
+func getIconMaxDirs(vars *dmvars.Variables) int32 {
+	icon := vars.TextV("icon", "")
+	iconState := vars.TextV("icon_state", "")
+	state, err := dmicon.Cache.GetState(icon, iconState)
+	if err != nil {
+		return 0
+	}
+	return int32(state.Dirs)
+}
+
+// Direction mapping for random selection (duplicated from pquickedit for now)
+var _relativeIndexToDir = map[int32]int{
+	1: 1, // NORTH
+	2: 2, // SOUTH
+	3: 4, // EAST
+	4: 8, // WEST
+	5: 5, // NORTHEAST
+	6: 6, // SOUTHWEST
+	7: 9, // NORTHWEST
+	8: 10, // SOUTHEAST
+}
+
