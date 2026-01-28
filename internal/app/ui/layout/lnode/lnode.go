@@ -7,5 +7,4 @@ const (
 	NamePrefabs       = "Prefabs"
 	NameSearch        = "Search"
 	NameVariables     = "Variables"
-	NamePalette       = "Palette"
 )

@@ -15,15 +15,13 @@ import (
 )
 
 const (
-	TNAdd             = "Add"
-	TNFill            = "Fill"
-	TNGrab            = "Grab"
-	TNMove            = "Move"
-	TNPick            = "Pick"
-	TNDelete          = "Delete"
-	TNReplace         = "Replace"
-	TNViewObsolete    = "View Obsolete"
-	TNReplaceObsolete = "Replace Obsolete"
+	TNAdd     = "Add"
+	TNFill    = "Fill"
+	TNGrab    = "Grab"
+	TNMove    = "Move"
+	TNPick    = "Pick"
+	TNDelete  = "Delete"
+	TNReplace = "Replace"
 )
 
 func init() {
@@ -76,15 +74,13 @@ var (
 	oldCoord util.Point
 
 	tools = map[string]Tool{
-		TNAdd:             newAdd(),
-		TNFill:            newFill(),
-		TNGrab:            newGrab(),
-		TNMove:            newMove(),
-		TNPick:            newPick(),
-		TNDelete:          newDelete(),
-		TNReplace:         newReplace(),
-		TNViewObsolete:    newViewObsolete(),
-		TNReplaceObsolete: newReplaceObsolete(),
+		TNAdd:     newAdd(),
+		TNFill:    newFill(),
+		TNGrab:    newGrab(),
+		TNMove:    newMove(),
+		TNPick:    newPick(),
+		TNDelete:  newDelete(),
+		TNReplace: newReplace(),
 	}
 
 	selectedToolName = TNAdd

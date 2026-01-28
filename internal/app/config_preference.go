@@ -69,12 +69,9 @@ func (a *app) loadPreferencesConfig() {
 				QuickEditMapPane: true,
 			},
 			Editor: prefs.Editor{
-				SaveFormat:         prefs.SaveFormatInitial,
-				CodeEditor:         prefs.CodeEditorVSC,
-				NudgeMode:          prefs.SaveNudgeModePixel,
-				ObsoleteObjectPath: "/obj/obselete",
-				ObsoleteTurfPath:   "/turf/obselete",
-				ObsoleteAreaPath:   "/area/obselete",
+				SaveFormat: prefs.SaveFormatInitial,
+				CodeEditor: prefs.CodeEditorVSC,
+				NudgeMode:  prefs.SaveNudgeModePixel,
 			},
 			Application: prefs.Application{
 				CheckForUpdates: true,

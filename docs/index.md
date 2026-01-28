@@ -1,1 +1,1 @@
-# RedDMM
+# StrongDMM

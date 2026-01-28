@@ -3,7 +3,6 @@ package layout
 import (
 	"sdmm/internal/app/config"
 	"sdmm/internal/app/ui/cpenvironment"
-	"sdmm/internal/app/ui/cppalette"
 	"sdmm/internal/app/ui/cpprefabs"
 	"sdmm/internal/app/ui/cpsearch"
 	"sdmm/internal/app/ui/cpvareditor"
@@ -17,7 +16,6 @@ import (
 
 type app interface {
 	cpenvironment.App
-	cppalette.App
 	cpprefabs.App
 	cpsearch.App
 	cpwsarea.App
@@ -55,7 +53,6 @@ type Layout struct {
 	rightDownNodeId int32
 
 	Environment *cpenvironment.Environment
-	Palette     *cppalette.Palette
 	Prefabs     *cpprefabs.Prefabs
 	Search      *cpsearch.Search
 	WsArea      *cpwsarea.WsArea
@@ -70,14 +67,12 @@ func New(app app) *Layout {
 	l.loadConfig()
 
 	l.Environment = new(cpenvironment.Environment)
-	l.Palette = new(cppalette.Palette)
 	l.Prefabs = new(cpprefabs.Prefabs)
 	l.Search = new(cpsearch.Search)
 	l.WsArea = new(cpwsarea.WsArea)
 	l.VarEditor = new(cpvareditor.VarEditor)
 
 	l.Environment.Init(app)
-	l.Palette.Init(app)
 	l.Prefabs.Init(app)
 	l.Search.Init(app)
 	l.WsArea.Init(app)
@@ -90,7 +85,6 @@ func (l *Layout) Process() {
 	l.updateNodes()
 
 	l.showEnvironmentNode()
-	l.showPaletteNode()
 	l.showPrefabsNode()
 	l.showSearchNode()
 	l.showVariablesNode()
@@ -125,10 +119,6 @@ func (l *Layout) FocusNode(nodeName string) {
 
 func (l *Layout) showEnvironmentNode() {
 	l.wrapNode(lnode.NameEnvironment, l.leftNodeId, l.Environment)
-}
-
-func (l *Layout) showPaletteNode() {
-	l.wrapNode(lnode.NamePalette, l.leftDownNodeId, l.Palette)
 }
 
 func (l *Layout) showWorkspaceAreaNode() {

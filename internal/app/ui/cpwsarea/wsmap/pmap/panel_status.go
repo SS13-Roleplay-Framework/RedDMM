@@ -5,12 +5,9 @@ import (
 
 	"sdmm/internal/app/ui/cpwsarea/wsmap/tools"
 	"sdmm/internal/app/ui/shortcut"
-	"sdmm/internal/imguiext"
 	"sdmm/internal/imguiext/icon"
 	w "sdmm/internal/imguiext/widget"
 	"sdmm/internal/platform"
-
-	"github.com/SpaiR/imgui-go"
 )
 
 func (p *PaneMap) showStatusPanel() {
@@ -28,23 +25,6 @@ func (p *PaneMap) showStatusPanel() {
 }
 
 func (p *PaneMap) panelStatusLayoutStatus() (layout w.Layout) {
-	// Randomize direction checkbox
-	// Disabled (but not unticked) when using Move, ViewObsolete tools, or stamps
-	layout = append(layout, w.Custom(func() {
-		// Check if we should disable the checkbox
-		disableRandomize := tools.IsSelected(tools.TNMove) ||
-			tools.IsSelected(tools.TNViewObsolete)
-		// Note: When stamps are implemented, add: || isUsingStamp()
-
-		imgui.BeginDisabledV(disableRandomize)
-		randomizeDir := p.app.Prefs().Editor.RandomizeDirection
-		if imgui.Checkbox("##randomize_dir", &randomizeDir) {
-			p.app.SetRandomizeDirection(randomizeDir)
-		}
-		imgui.EndDisabled()
-		imguiext.SetItemHoveredTooltip("Randomize the direction of the object from available directions when placing.")
-	}))
-
 	if p.canvasState.HoverOutOfBounds() {
 		layout = append(layout, w.TextFrame("out of bounds"))
 	} else {

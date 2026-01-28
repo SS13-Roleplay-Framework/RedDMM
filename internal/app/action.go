@@ -236,11 +236,6 @@ func (a *app) Prefs() prefs.Prefs {
 	return a.preferencesConfig().Prefs
 }
 
-// SetRandomizeDirection sets the randomize direction preference.
-func (a *app) SetRandomizeDirection(value bool) {
-	a.preferencesConfig().Prefs.Editor.RandomizeDirection = value
-}
-
 // FocusApplicationWindow explicitly moves an OS focus to the current application window.
 func (a *app) FocusApplicationWindow() {
 	a.masterWindow.Handle().Focus()

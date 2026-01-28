@@ -51,14 +51,3 @@ type OptionPref struct {
 func MakeOptionPref() OptionPref {
 	return OptionPref{}
 }
-
-type StringPref struct {
-	basePref
-
-	FGet func() string
-	FSet func(string)
-}
-
-func MakeStringPref() StringPref {
-	return StringPref{}
-}
