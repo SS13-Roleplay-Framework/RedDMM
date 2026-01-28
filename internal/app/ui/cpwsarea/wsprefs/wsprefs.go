@@ -58,6 +58,9 @@ func (ws *WsPrefs) showContent() {
 			if pref, ok := pref.(OptionPref); ok {
 				showOptionPref(pref)
 			}
+			if pref, ok := pref.(StringPref); ok {
+				showStringPref(pref)
+			}
 			imgui.PopID()
 		}
 	}
@@ -124,6 +127,20 @@ func showOptionPref(pref OptionPref) {
 			}
 		}
 		imgui.EndCombo()
+	}
+}
+
+func showStringPref(pref StringPref) {
+	markdown.ShowHeaderV(pref.Name, window.FontH3, style.ColorWhite)
+
+	imgui.PushTextWrapPos()
+	imgui.TextDisabled(pref.Desc)
+	showHelp(pref.Help)
+	imgui.PopTextWrapPos()
+
+	v := pref.FGet()
+	if imgui.InputText(pref.Label, &v) {
+		pref.FSet(v)
 	}
 }
 
